@@ -9,33 +9,35 @@ public class GenericDaCTask<I,O> extends RecursiveTask<O> {
     private I input;
     private Divider<I> divider;
     private Conquerer<O> conquerer;
+    private Executor<I,O> executor;
 
-    public GenericDaCTask(I input, Divider<I> divider, Conquerer<O> conquerer) {
+    public GenericDaCTask(I input, Divider<I> divider, Conquerer<O> conquerer, Executor<I,O> executor) {
         this.input = input;
         this.divider = divider;
         this.conquerer = conquerer;
+        this.executor = executor;
     }
 
     @Override
     protected O compute() {
-        Iterable<I> dividedInputs = divider.divide(input); // Use division logic to produce new inputs
-        Iterator<I> checkableIterator = dividedInputs.iterator();
-        checkableIterator.next();
-        if (!checkableIterator.hasNext()) {
-
+        if (!divider.canDivide(input)) { // Base case
+            return executor.execute(input);
         }
-        Collection<GenericDaCTask<I,O>> subTasks = new ArrayList<>();
-        for (I dividedInput : dividedInputs) { // Create new generic tasks for all new inputs
-            subTasks.add(new GenericDaCTask<I, O>(dividedInput, divider, conquerer));
-        }
-        invokeAll(subTasks); // Run all subtasks
-        Collection<O> conquerableResults = new ArrayList<>();
-        for (GenericDaCTask<I,O> joinableSubTask : subTasks) {
-            O result = joinableSubTask.join();
-            if (result != null) { // Treat null as RecursiveAction as opposed to RecursiveTask
-                conquerableResults.add(result);
+        else { // Perform DaC
+            Iterable<I> dividedInputs = divider.divide(input); // Use division logic to produce new inputs
+            Collection<GenericDaCTask<I,O>> subTasks = new ArrayList<>();
+            for (I dividedInput : dividedInputs) { // Create new generic tasks for all new inputs
+                subTasks.add(new GenericDaCTask<I, O>(dividedInput, divider, conquerer, executor));
             }
+            invokeAll(subTasks); // Run all subtasks
+            Collection<O> conquerableResults = new ArrayList<>();
+            for (GenericDaCTask<I,O> joinableSubTask : subTasks) {
+                O result = joinableSubTask.join();
+                if (result != null) { // Treat null as RecursiveAction as opposed to RecursiveTask
+                    conquerableResults.add(result);
+                }
+            }
+            return conquerer.conquer(conquerableResults);
         }
-        return conquerer.conquer(conquerableResults);
     }
 }
