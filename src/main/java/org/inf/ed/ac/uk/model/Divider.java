@@ -4,10 +4,9 @@ import java.util.ArrayList;
 
 public abstract class Divider<I> {
 
-    public Divider() {}
-
-    abstract boolean canDivide(I input);
-    abstract Iterable<I> divisionProcedure(I input);
+    public Divider(){}
+    protected abstract boolean canDivide(I input);
+    protected abstract Iterable<I> divisionProcedure(I input);
 
     /**
      * Returns an iterable collection of divided inputs
