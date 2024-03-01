@@ -7,9 +7,9 @@ import skeleton.Skeleton;
 
 import java.util.*;
 
-public class ClientCodeExample {
+public class MergeSortExample {
 
-    private static class MergeSortDivider extends Divider<List<Integer>> {
+    private class MergeSortDivider extends Divider<List<Integer>> {
         private final int DIVISION_THRESHOLD;
         public MergeSortDivider(int divisionThreshold) {
             super();
@@ -28,7 +28,7 @@ public class ClientCodeExample {
         }
     }
 
-    private static class MergeSortConquerer extends Conquerer<List<Integer>> {
+    private class MergeSortConquerer extends Conquerer<List<Integer>> {
 
         public MergeSortConquerer() {
             super();
@@ -69,7 +69,7 @@ public class ClientCodeExample {
         }
     }
 
-    private static class SequentialMergeSortExecutor extends Executor<List<Integer>, List<Integer>> {
+    private class SequentialMergeSortExecutor extends Executor<List<Integer>, List<Integer>> {
         private final int BASE_CASE_SIZE;
         public SequentialMergeSortExecutor(int baseCaseSize) {
             this.BASE_CASE_SIZE = baseCaseSize;
@@ -108,7 +108,7 @@ public class ClientCodeExample {
         }
     }
 
-    public static void main(String[] args) {
+    public void run() {
         final int PARALLELISM = 16;
         Skeleton<List<Integer>, List<Integer>> myMergeSortSkeleton = new Skeleton<>(
                 PARALLELISM,

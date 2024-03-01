@@ -26,7 +26,7 @@ public class GenericDaCTask<I,O> extends RecursiveTask<O> {
             Iterable<I> dividedInputs = divider.divide(input); // Use division logic to produce new inputs
             Collection<GenericDaCTask<I,O>> subTasks = new ArrayList<>();
             for (I dividedInput : dividedInputs) { // Create new generic tasks for all new inputs
-                subTasks.add(new GenericDaCTask<I, O>(dividedInput, divider, conquerer, executor));
+                subTasks.add(new GenericDaCTask<>(dividedInput, divider, conquerer, executor));
             }
             invokeAll(subTasks); // Run all subtasks
             Collection<O> conquerableResults = new ArrayList<>();
