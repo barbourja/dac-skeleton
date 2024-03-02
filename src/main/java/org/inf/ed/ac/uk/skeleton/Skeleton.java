@@ -1,9 +1,4 @@
-package skeleton;
-
-import org.inf.ed.ac.uk.model.Conquerer;
-import org.inf.ed.ac.uk.model.Divider;
-import org.inf.ed.ac.uk.model.Executor;
-import org.inf.ed.ac.uk.model.GenericDaCTask;
+package org.inf.ed.ac.uk.skeleton;
 
 import java.util.ArrayList;
 import java.util.concurrent.ForkJoinPool;

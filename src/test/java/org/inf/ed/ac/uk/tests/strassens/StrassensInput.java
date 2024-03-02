@@ -3,13 +3,13 @@ package org.inf.ed.ac.uk.tests.strassens;
 /**
  * Used to batch all Strassen algorithm inputs together for more readable (less index oriented!) code
  */
-public class StrassensInput3Tuple {
+public class StrassensInput {
     private final Matrix MAT_1;
     private final Matrix MAT_2;
     private final Matrix RES;
 
     private final int DIM;
-    public StrassensInput3Tuple(Matrix mat1, Matrix mat2, Matrix res) {
+    public StrassensInput(Matrix mat1, Matrix mat2, Matrix res) {
         if (mat1 == null || mat2 == null || res == null) {
             throw new RuntimeException("Attempted to initialize invalid Strassen's input! Must provide 3 matrices!");
         }

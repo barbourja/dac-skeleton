@@ -1,26 +1,26 @@
 package org.inf.ed.ac.uk.tests.strassens;
 
-import org.inf.ed.ac.uk.model.Conquerer;
-import org.inf.ed.ac.uk.model.Divider;
-import org.inf.ed.ac.uk.model.Executor;
-import skeleton.Skeleton;
+import org.inf.ed.ac.uk.skeleton.Conquerer;
+import org.inf.ed.ac.uk.skeleton.Divider;
+import org.inf.ed.ac.uk.skeleton.Executor;
+import org.inf.ed.ac.uk.skeleton.Skeleton;
 
 import java.util.*;
 
 public class StrassensExample {
 
-    private class StrassensDivider extends Divider<StrassensInput3Tuple> {
+    private class StrassensDivider extends Divider<StrassensInput> {
         private final int DIMENSION_DIVISION_THRESHOLD;
         public StrassensDivider(int dimensionDivisionThreshold) {
             this.DIMENSION_DIVISION_THRESHOLD = dimensionDivisionThreshold;
         }
         @Override
-        protected boolean canDivide(StrassensInput3Tuple inputMatrices) {
+        protected boolean canDivide(StrassensInput inputMatrices) {
             return inputMatrices.getDim() > DIMENSION_DIVISION_THRESHOLD;
         }
 
         @Override
-        protected Iterable<StrassensInput3Tuple> divisionProcedure(StrassensInput3Tuple inputMatrices) {
+        protected Iterable<StrassensInput> divisionProcedure(StrassensInput inputMatrices) {
             Matrix[] mat1Split = inputMatrices.getMat1().quadrantSplit();
             Matrix[] mat2Split = inputMatrices.getMat2().quadrantSplit();
             Matrix[] resQuadrants = inputMatrices.getRes().quadrantSplit();
@@ -35,40 +35,40 @@ public class StrassensExample {
             // of some readability/clarity)
             // n.b. essentially the idea is divide our input logically into 7 different inputs based on
             // mathematical formula, not required to understand exactly the motivation just trust that it works ;)
-            StrassensInput3Tuple task0Input = new StrassensInput3Tuple(
+            StrassensInput task0Input = new StrassensInput(
                     mat1Split[2].sub(mat1Split[0], workingQuadrants[3]),
                     mat2Split[1].sub(mat2Split[3], workingQuadrants[4]),
                     workingQuadrants[0]
             );
-            StrassensInput3Tuple task1Input = new StrassensInput3Tuple(
+            StrassensInput task1Input = new StrassensInput(
                     mat1Split[2].add(mat1Split[3], workingQuadrants[5]),
                     mat2Split[1].sub(mat2Split[0], workingQuadrants[6]),
                     workingQuadrants[1]
             );
-            StrassensInput3Tuple task2Input = new StrassensInput3Tuple(
+            StrassensInput task2Input = new StrassensInput(
                     mat1Split[0],
                     mat2Split[0],
                     workingQuadrants[2]
             );
-            StrassensInput3Tuple task3Input = new StrassensInput3Tuple(
+            StrassensInput task3Input = new StrassensInput(
                     workingQuadrants[5].sub(mat1Split[0], workingQuadrants[7]),
                     mat2Split[0].add(mat2Split[3], workingQuadrants[8])
                             .subInPlace(mat2Split[1]),
                     resQuadrants[3]
             );
-            StrassensInput3Tuple task4Input = new StrassensInput3Tuple(
+            StrassensInput task4Input = new StrassensInput(
                     mat1Split[1],
                     mat2Split[2],
                     resQuadrants[0]
             );
-            StrassensInput3Tuple task5Input = new StrassensInput3Tuple(
+            StrassensInput task5Input = new StrassensInput(
                     mat1Split[0].add(mat1Split[1], workingQuadrants[9])
                             .subInPlace(mat1Split[2])
                             .subInPlace(mat1Split[3]),
                     mat2Split[3],
                     resQuadrants[1]
             );
-            StrassensInput3Tuple task6Input = new StrassensInput3Tuple(
+            StrassensInput task6Input = new StrassensInput(
                     mat1Split[3],
                     mat2Split[2].add(workingQuadrants[6], workingQuadrants[10])
                             .subInPlace(mat2Split[3]),
@@ -113,7 +113,7 @@ public class StrassensExample {
         }
     }
 
-    private class SequentialStrassensExecutor extends Executor<StrassensInput3Tuple, Matrix> {
+    private class SequentialStrassensExecutor extends Executor<StrassensInput, Matrix> {
 
         private final int MIN_MATRIX_DIMENSION;
         public SequentialStrassensExecutor(int minMatrixDimension) {
@@ -121,7 +121,7 @@ public class StrassensExample {
         }
 
         @Override
-        public Matrix execute(StrassensInput3Tuple input) {
+        public Matrix execute(StrassensInput input) {
             if (input.getDim() <= MIN_MATRIX_DIMENSION) {
                 return input.getMat1().mult(input.getMat2(), input.getRes());
             }
@@ -136,40 +136,40 @@ public class StrassensExample {
                     workingQuadrants[i] = new ConcreteMatrix(new int[input.getDim()/2][input.getDim()/2]);
                 }
 
-                Matrix u = execute(new StrassensInput3Tuple(
+                Matrix u = execute(new StrassensInput(
                         mat1Split[2].sub(mat1Split[0], resQuadrants[0]),
                         mat2Split[1].sub(mat2Split[3], resQuadrants[1]),
                         workingQuadrants[0]
                 ));
-                Matrix v = execute(new StrassensInput3Tuple(
+                Matrix v = execute(new StrassensInput(
                         mat1Split[2].add(mat1Split[3], resQuadrants[2]),
                         mat2Split[1].sub(mat2Split[0], workingQuadrants[3]),
                         workingQuadrants[1]
                 ));
-                Matrix p1 = execute(new StrassensInput3Tuple(
+                Matrix p1 = execute(new StrassensInput(
                         mat1Split[0],
                         mat2Split[0],
                         workingQuadrants[2]
                 ));
-                Matrix p2 = execute(new StrassensInput3Tuple(
+                Matrix p2 = execute(new StrassensInput(
                         resQuadrants[2].sub(mat1Split[0], resQuadrants[2]),
                         mat2Split[0].add(mat2Split[3], resQuadrants[1])
                                 .subInPlace(mat2Split[1]),
                         resQuadrants[3]
                 ));
-                Matrix p3 = execute(new StrassensInput3Tuple(
+                Matrix p3 = execute(new StrassensInput(
                         mat1Split[1],
                         mat2Split[2],
                         resQuadrants[0]
                 ));
-                Matrix p4 = execute(new StrassensInput3Tuple(
+                Matrix p4 = execute(new StrassensInput(
                         mat1Split[0].add(mat1Split[1], resQuadrants[2])
                                 .subInPlace(mat1Split[2])
                                 .subInPlace(mat1Split[3]),
                         mat2Split[3],
                         resQuadrants[1]
                 ));
-                Matrix p5 = execute(new StrassensInput3Tuple(
+                Matrix p5 = execute(new StrassensInput(
                         mat1Split[3],
                         mat2Split[2].add(workingQuadrants[3], workingQuadrants[3])
                                 .subInPlace(mat2Split[3]),
@@ -190,7 +190,7 @@ public class StrassensExample {
     }
     public void run() {
         final int PARALLELISM = 16;
-        Skeleton<StrassensInput3Tuple, Matrix> myStrassensSkeleton = new Skeleton<>(
+        Skeleton<StrassensInput, Matrix> myStrassensSkeleton = new Skeleton<>(
                 PARALLELISM,
                 new SequentialStrassensExecutor(32),
                 new StrassensDivider(128),
@@ -212,7 +212,7 @@ public class StrassensExample {
         Matrix mat1 = new ConcreteMatrix(input1);
         Matrix mat2 = new ConcreteMatrix(input2);
 
-        skeletonRes = myStrassensSkeleton.execute(new StrassensInput3Tuple(mat1, mat2, skeletonRes));
+        skeletonRes = myStrassensSkeleton.execute(new StrassensInput(mat1, mat2, skeletonRes));
         directRes = mat1.mult(mat2, directRes);
         System.out.println(directRes);
         System.out.println(skeletonRes);

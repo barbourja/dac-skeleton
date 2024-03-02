@@ -1,9 +1,9 @@
 package org.inf.ed.ac.uk.tests;
 
-import org.inf.ed.ac.uk.model.Conquerer;
-import org.inf.ed.ac.uk.model.Divider;
-import org.inf.ed.ac.uk.model.Executor;
-import skeleton.Skeleton;
+import org.inf.ed.ac.uk.skeleton.Conquerer;
+import org.inf.ed.ac.uk.skeleton.Divider;
+import org.inf.ed.ac.uk.skeleton.Executor;
+import org.inf.ed.ac.uk.skeleton.Skeleton;
 
 import java.util.*;
 
