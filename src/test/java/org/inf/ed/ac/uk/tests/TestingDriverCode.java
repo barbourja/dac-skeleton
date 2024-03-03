@@ -2,10 +2,10 @@ package org.inf.ed.ac.uk.tests;
 
 import org.inf.ed.ac.uk.tests.strassens.StrassensExample;
 
-public class ExampleDriverCode {
+public class TestingDriverCode {
 
     public static void main(String[] args) {
         StrassensExample exampleStrassens = new StrassensExample();
-        exampleStrassens.run();
+        exampleStrassens.testMinSize();
     }
 }

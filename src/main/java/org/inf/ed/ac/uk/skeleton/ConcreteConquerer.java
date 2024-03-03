@@ -1,5 +1,7 @@
 package org.inf.ed.ac.uk.skeleton;
 
+import java.util.ConcurrentModificationException;
+
 /**
  * Responsible for the recombination of subtask outputs as part of the 'conquer' step of a
  * parallel divide-and-conquer algorithm.
@@ -8,14 +10,14 @@ package org.inf.ed.ac.uk.skeleton;
  * synchronization of shared global state!
  * @param <O> output type of divide-and-conquer algorithm
  */
-public abstract class Conquerer<O> {
+public abstract class ConcreteConquerer<O> implements IConquerer<O>{
 
-    public Conquerer(){}
+    public ConcreteConquerer(){}
 
     /**
      * Combines multiple outputs into a single output
      * @param outputsToConquer iterable collection of outputs to combine
      * @return single output result of combination
      */
-    public abstract O conquer(Iterable<O> outputsToConquer);
+    public abstract O conquer(Iterable<O> outputsToConquer) throws ConcurrentModificationException;
 }

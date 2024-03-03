@@ -1,21 +1,23 @@
 package org.inf.ed.ac.uk.tests.strassens;
 
-import org.inf.ed.ac.uk.skeleton.Conquerer;
-import org.inf.ed.ac.uk.skeleton.Divider;
-import org.inf.ed.ac.uk.skeleton.Executor;
-import org.inf.ed.ac.uk.skeleton.Skeleton;
+import org.inf.ed.ac.uk.skeleton.ConcreteConquerer;
+import org.inf.ed.ac.uk.skeleton.ConcreteDivider;
+import org.inf.ed.ac.uk.skeleton.ConcreteExecutor;
+import org.inf.ed.ac.uk.skeleton.DaCSkeleton;
 
 import java.util.*;
 
+import static java.lang.Math.*;
+
 public class StrassensExample {
 
-    private class StrassensDivider extends Divider<StrassensInput> {
-        private final int DIMENSION_DIVISION_THRESHOLD;
+    protected class StrassensDivider extends ConcreteDivider<StrassensInput> {
+        private int DIMENSION_DIVISION_THRESHOLD;
         public StrassensDivider(int dimensionDivisionThreshold) {
             this.DIMENSION_DIVISION_THRESHOLD = dimensionDivisionThreshold;
         }
         @Override
-        protected boolean canDivide(StrassensInput inputMatrices) {
+        public boolean canDivide(StrassensInput inputMatrices) {
             return inputMatrices.getDim() > DIMENSION_DIVISION_THRESHOLD;
         }
 
@@ -76,9 +78,16 @@ public class StrassensExample {
             );
             return List.of(task0Input, task1Input, task2Input, task3Input, task4Input, task5Input, task6Input);
         }
+        public boolean setParallelismCutOff(int newCutOff) {
+            if (newCutOff < 1) {
+                return false;
+            }
+            DIMENSION_DIVISION_THRESHOLD = newCutOff;
+            return true;
+        }
     }
 
-    private class StrassensConquerer extends Conquerer<Matrix> {
+    protected class StrassensConquerer extends ConcreteConquerer<Matrix> {
         @Override
         public Matrix conquer(Iterable<Matrix> outputsToConquer) {
             if (outputsToConquer.spliterator().getExactSizeIfKnown() != 7) {
@@ -113,7 +122,7 @@ public class StrassensExample {
         }
     }
 
-    private class SequentialStrassensExecutor extends Executor<StrassensInput, Matrix> {
+    protected class SequentialStrassensExecutor extends ConcreteExecutor<StrassensInput, Matrix> {
 
         private final int MIN_MATRIX_DIMENSION;
         public SequentialStrassensExecutor(int minMatrixDimension) {
@@ -189,14 +198,14 @@ public class StrassensExample {
         }
     }
     public void run() {
-        final int PARALLELISM = 16;
-        Skeleton<StrassensInput, Matrix> myStrassensSkeleton = new Skeleton<>(
-                PARALLELISM,
+        final int INITIAL_PARALLELISM = 16;
+        DaCSkeleton<StrassensInput, Matrix> myStrassensDaCSkeleton = new DaCSkeleton<>(
+                INITIAL_PARALLELISM,
                 new SequentialStrassensExecutor(32),
                 new StrassensDivider(128),
                 new StrassensConquerer()
         );
-
+        System.out.println(myStrassensDaCSkeleton.toString());
         final int INPUT_DIMENSION = 1024;
         Random rand = new Random();
         int[][] input1 = new int[INPUT_DIMENSION][INPUT_DIMENSION];
@@ -212,12 +221,54 @@ public class StrassensExample {
         Matrix mat1 = new ConcreteMatrix(input1);
         Matrix mat2 = new ConcreteMatrix(input2);
 
-        skeletonRes = myStrassensSkeleton.execute(new StrassensInput(mat1, mat2, skeletonRes));
+        skeletonRes = myStrassensDaCSkeleton.execute(new StrassensInput(mat1, mat2, skeletonRes));
         directRes = mat1.mult(mat2, directRes);
-        System.out.println(directRes);
-        System.out.println(skeletonRes);
 
         System.out.println(directRes.equals(skeletonRes));
 
+    }
+
+    public void testParallelism() {
+        final int INITIAL_PARALLELISM = 16;
+        final int SEQ_MIN_SIZE = 32;
+        final int PARALLELISM_MIN_SIZE_PLACEHOLDER = 1;
+        final int N = 11;
+        DaCSkeleton<StrassensInput, Matrix> myStrassensDaCSkeleton = new DaCSkeleton<>(
+                INITIAL_PARALLELISM,
+                new SequentialStrassensExecutor(SEQ_MIN_SIZE),
+                new StrassensDivider(PARALLELISM_MIN_SIZE_PLACEHOLDER),
+                new StrassensConquerer()
+        );
+        int inputSize = (int) pow(2, N);
+        Integer[] parallelismValues = new Integer[]{1, 2, 4, 8, 16, 32, 64};
+
+        StrassensSkeletonTest tester = new StrassensSkeletonTest(10, 2);
+        tester.testVaryingParallelism(myStrassensDaCSkeleton, inputSize, parallelismValues, true);
+
+    }
+
+    public void testMinSize() {
+        final int PARALLELISM = 128;
+        final int SEQ_MIN_SIZE = 16;
+        final int PARALLELISM_MIN_SIZE_PLACEHOLDER = 1;
+        final int N = 11;
+        DaCSkeleton<StrassensInput, Matrix> myStrassensDaCSkeleton = new DaCSkeleton<>(
+                PARALLELISM,
+                new SequentialStrassensExecutor(SEQ_MIN_SIZE),
+                new StrassensDivider(PARALLELISM_MIN_SIZE_PLACEHOLDER),
+                new StrassensConquerer()
+        );
+        int inputSize = (int) pow(2, N);
+        int maxLevelReached = (int) ceil(log(PARALLELISM) / log(2));
+        int minimumMinSize = (int) ceil(inputSize / pow(2, maxLevelReached));
+        Integer[] minSizeValues = new Integer[7];
+        int currMinSize = minimumMinSize;
+        for (int i = 0; i < minSizeValues.length; i++) {
+            minSizeValues[i] = currMinSize;
+            currMinSize = currMinSize * 2;
+        }
+
+        StrassensSkeletonTest tester = new StrassensSkeletonTest(10, 2);
+        tester.testVaryingMinSize(myStrassensDaCSkeleton, inputSize, PARALLELISM, minSizeValues, true);
     }
 }

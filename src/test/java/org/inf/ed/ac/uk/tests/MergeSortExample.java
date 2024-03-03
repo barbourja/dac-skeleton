@@ -1,15 +1,15 @@
 package org.inf.ed.ac.uk.tests;
 
-import org.inf.ed.ac.uk.skeleton.Conquerer;
-import org.inf.ed.ac.uk.skeleton.Divider;
-import org.inf.ed.ac.uk.skeleton.Executor;
-import org.inf.ed.ac.uk.skeleton.Skeleton;
+import org.inf.ed.ac.uk.skeleton.ConcreteConquerer;
+import org.inf.ed.ac.uk.skeleton.ConcreteDivider;
+import org.inf.ed.ac.uk.skeleton.ConcreteExecutor;
+import org.inf.ed.ac.uk.skeleton.DaCSkeleton;
 
 import java.util.*;
 
 public class MergeSortExample {
 
-    private class MergeSortDivider extends Divider<List<Integer>> {
+    private class MergeSortDivider extends ConcreteDivider<List<Integer>> {
         private final int DIVISION_THRESHOLD;
         public MergeSortDivider(int divisionThreshold) {
             super();
@@ -28,7 +28,7 @@ public class MergeSortExample {
         }
     }
 
-    private class MergeSortConquerer extends Conquerer<List<Integer>> {
+    private class MergeSortConquerer extends ConcreteConquerer<List<Integer>> {
 
         public MergeSortConquerer() {
             super();
@@ -69,7 +69,7 @@ public class MergeSortExample {
         }
     }
 
-    private class SequentialMergeSortExecutor extends Executor<List<Integer>, List<Integer>> {
+    private class SequentialMergeSortExecutor extends ConcreteExecutor<List<Integer>, List<Integer>> {
         private final int BASE_CASE_SIZE;
         public SequentialMergeSortExecutor(int baseCaseSize) {
             this.BASE_CASE_SIZE = baseCaseSize;
@@ -91,7 +91,7 @@ public class MergeSortExample {
             return input;
         }
         public List<Integer> execute(List<Integer> input) { // Sequential MergeSort
-            Divider<List<Integer>> divider = new MergeSortDivider(BASE_CASE_SIZE); // DRY principle - using divider implementation for sequential
+            ConcreteDivider<List<Integer>> divider = new MergeSortDivider(BASE_CASE_SIZE); // DRY principle - using divider implementation for sequential
             Iterable<List<Integer>> dividedInputs = divider.divide(input);
 
             boolean baseReached = dividedInputs.spliterator().getExactSizeIfKnown() == 1; // If divide returns singleton we have reached the base case size
@@ -100,7 +100,7 @@ public class MergeSortExample {
                 return insertionSort(dividedInputs.iterator().next());
             }
             else {
-                Conquerer<List<Integer>> conquerer = new MergeSortConquerer(); // DRY principle - using conquerer implementation for merging lists
+                ConcreteConquerer<List<Integer>> conquerer = new MergeSortConquerer(); // DRY principle - using conquerer implementation for merging lists
                 List<Integer> list1 = dividedInputsIterator.next();
                 List<Integer> list2 = dividedInputsIterator.next();
                 return conquerer.conquer(List.of(execute(list1), execute(list2)));
@@ -110,7 +110,7 @@ public class MergeSortExample {
 
     public void run() {
         final int PARALLELISM = 16;
-        Skeleton<List<Integer>, List<Integer>> myMergeSortSkeleton = new Skeleton<>(
+        DaCSkeleton<List<Integer>, List<Integer>> myMergeSortDaCSkeleton = new DaCSkeleton<>(
                 PARALLELISM,
                 new SequentialMergeSortExecutor(20),
                 new MergeSortDivider(100),
@@ -123,7 +123,7 @@ public class MergeSortExample {
         for (int i = 0; i < 100000; i++) {
             testList.add(rand.nextInt(1000000));
         }
-        List<Integer> skeletonResult = myMergeSortSkeleton.execute(testList);
+        List<Integer> skeletonResult = myMergeSortDaCSkeleton.execute(testList);
         Collections.sort(testList);
         System.out.println(testList.equals(skeletonResult));
     }

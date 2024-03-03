@@ -1,6 +1,7 @@
 package org.inf.ed.ac.uk.skeleton;
 
 import java.util.ArrayList;
+import java.util.ConcurrentModificationException;
 
 /**
  * Responsible for the 'divide' step of a parallel divide-and-conquer algorithm.
@@ -11,10 +12,10 @@ import java.util.ArrayList;
  * synchronization of shared global state!
  * @param <I> input type of divide-and-conquer algorithm
  */
-public abstract class Divider<I> {
+public abstract class ConcreteDivider<I> implements IDivider<I>{
 
-    public Divider(){}
-    protected abstract boolean canDivide(I input);
+    public ConcreteDivider(){}
+    public abstract boolean canDivide(I input);
     protected abstract Iterable<I> divisionProcedure(I input);
 
     /**
@@ -22,7 +23,7 @@ public abstract class Divider<I> {
      * divided it will return a singleton iterable.
      * @return 1..N valid inputs
      */
-    public Iterable<I> divide(I input) {
+    public Iterable<I> divide(I input) throws ConcurrentModificationException {
         if (canDivide(input)) {
             return divisionProcedure(input); // Return the divided input
         }
