@@ -9,7 +9,7 @@ import java.util.*;
 
 public class MergeSortExample {
 
-    private class MergeSortDivider extends ConcreteDivider<List<Integer>> {
+    protected static class MergeSortDivider extends ConcreteDivider<List<Integer>> {
         private final int DIVISION_THRESHOLD;
         public MergeSortDivider(int divisionThreshold) {
             super();
@@ -28,7 +28,7 @@ public class MergeSortExample {
         }
     }
 
-    private class MergeSortConquerer extends ConcreteConquerer<List<Integer>> {
+    protected static class MergeSortConquerer extends ConcreteConquerer<List<Integer>> {
 
         public MergeSortConquerer() {
             super();
@@ -69,7 +69,7 @@ public class MergeSortExample {
         }
     }
 
-    private class SequentialMergeSortExecutor extends ConcreteExecutor<List<Integer>, List<Integer>> {
+    protected static class SequentialMergeSortExecutor extends ConcreteExecutor<List<Integer>, List<Integer>> {
         private final int BASE_CASE_SIZE;
         public SequentialMergeSortExecutor(int baseCaseSize) {
             this.BASE_CASE_SIZE = baseCaseSize;

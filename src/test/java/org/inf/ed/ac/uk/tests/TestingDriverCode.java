@@ -5,7 +5,11 @@ import org.inf.ed.ac.uk.tests.strassens.StrassensExample;
 public class TestingDriverCode {
 
     public static void main(String[] args) {
-        StrassensExample exampleStrassens = new StrassensExample();
-        exampleStrassens.testMinSize();
+//        MergeSortExample mergeSortExample = new MergeSortExample();
+//        mergeSortExample.run();;
+//        StrassensExample exampleStrassens = new StrassensExample();
+//        exampleStrassens.testMinSize();
+        NestedExample exampleNesting = new NestedExample();
+        exampleNesting.run();
     }
 }
