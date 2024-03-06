@@ -11,7 +11,7 @@ import static java.lang.Math.*;
 
 public class StrassensExample {
 
-    protected class StrassensDivider extends ConcreteDivider<StrassensInput> {
+    public class StrassensDivider extends ConcreteDivider<StrassensInput> {
         private int DIMENSION_DIVISION_THRESHOLD;
         public StrassensDivider(int dimensionDivisionThreshold) {
             this.DIMENSION_DIVISION_THRESHOLD = dimensionDivisionThreshold;
@@ -87,7 +87,7 @@ public class StrassensExample {
         }
     }
 
-    protected class StrassensConquerer extends ConcreteConquerer<Matrix> {
+    public class StrassensConquerer extends ConcreteConquerer<Matrix> {
         @Override
         public Matrix conquer(Iterable<Matrix> outputsToConquer) {
             if (outputsToConquer.spliterator().getExactSizeIfKnown() != 7) {
@@ -122,7 +122,7 @@ public class StrassensExample {
         }
     }
 
-    protected class SequentialStrassensExecutor extends ConcreteExecutor<StrassensInput, Matrix> {
+    public class SequentialStrassensExecutor extends ConcreteExecutor<StrassensInput, Matrix> {
 
         private final int MIN_MATRIX_DIMENSION;
         public SequentialStrassensExecutor(int minMatrixDimension) {
