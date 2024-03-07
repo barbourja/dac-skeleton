@@ -7,6 +7,8 @@ import org.inf.ed.ac.uk.skeleton.DaCSkeleton;
 
 import java.util.*;
 
+import static java.lang.Math.*;
+
 
 public class MergeSortExample {
 
@@ -142,7 +144,7 @@ public class MergeSortExample {
         final int SEQ_MIN_SIZE = 8;
         final int PARALLELISM_MIN_SIZE_PLACEHOLDER = 1;
         final int N = 23;
-        int inputSize = (int) Math.pow(2, N);
+        int inputSize = (int) pow(2, N);
 
         Integer[] parallelismValues = new Integer[]{1, 2, 4, 8, 16, 32, 64};
 
@@ -158,28 +160,28 @@ public class MergeSortExample {
 
     }
 
-//    public void testMinSize() {
-//        final int PARALLELISM = 128;
-//        final int SEQ_MIN_SIZE = 16;
-//        final int PARALLELISM_MIN_SIZE_PLACEHOLDER = 1;
-//        final int N = 11;
-//        DaCSkeleton<StrassensInput, Matrix> myStrassensDaCSkeleton = new DaCSkeleton<>(
-//                PARALLELISM,
-//                new StrassensExample.SequentialStrassensExecutor(SEQ_MIN_SIZE),
-//                new StrassensExample.StrassensDivider(PARALLELISM_MIN_SIZE_PLACEHOLDER),
-//                new StrassensExample.StrassensConquerer()
-//        );
-//        int inputSize = (int) pow(2, N);
-//        int maxLevelReached = (int) ceil(log(PARALLELISM) / log(2));
-//        int minimumMinSize = (int) ceil(inputSize / pow(2, maxLevelReached));
-//        Integer[] minSizeValues = new Integer[7];
-//        int currMinSize = minimumMinSize;
-//        for (int i = 0; i < minSizeValues.length; i++) {
-//            minSizeValues[i] = currMinSize;
-//            currMinSize = currMinSize * 2;
-//        }
-//
-//        StrassensSkeletonTest tester = new StrassensSkeletonTest(10, 2);
-//        tester.testVaryingMinSize(myStrassensDaCSkeleton, inputSize, PARALLELISM, minSizeValues, true);
-//    }
+    public void testMinSize() {
+        final int PARALLELISM = 2048;
+        final int SEQ_MIN_SIZE = 8;
+        final int PARALLELISM_MIN_SIZE_PLACEHOLDER = 1;
+        final int N = 23;
+        int inputSize = (int) pow(2, N);
+        DaCSkeleton<List<Integer>, List<Integer>> myMergeSortDaCSkeleton = new DaCSkeleton<>(
+                PARALLELISM,
+                new SequentialMergeSortExecutor(SEQ_MIN_SIZE),
+                new MergeSortDivider(PARALLELISM_MIN_SIZE_PLACEHOLDER),
+                new MergeSortConquerer()
+        );
+
+        int maxLevelReached = (int) ceil(log(PARALLELISM) / log(2));
+        int minimumMinSize = (int) ceil(inputSize / pow(2, maxLevelReached));
+        Integer[] minSizeValues = new Integer[7];
+        int currMinSize = minimumMinSize;
+        for (int i = 0; i < minSizeValues.length; i++) {
+            minSizeValues[i] = currMinSize;
+            currMinSize = currMinSize * 2;
+        }
+        MergeSortTest tester = new MergeSortTest(10, 2);
+        tester.testVaryingMinSize(myMergeSortDaCSkeleton, inputSize, PARALLELISM, minSizeValues, true);
+    }
 }

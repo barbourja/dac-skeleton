@@ -58,7 +58,7 @@ public class DaCSkeleton<I,O> implements IExecutor<I,O> {
         String output = this.getClass().getSimpleName() + " \n" +
                 "-".repeat(this.getClass().getSimpleName().length() + 1) + "\n" +
                 "Parallelism: " + THREAD_POOL.getParallelism() + "\n" +
-                "ConcreteExecutor: " + EXECUTOR.getClass().getSimpleName() + "\n" +
+                "Executor: " + EXECUTOR.getClass().getSimpleName() + "\n" +
                 "ConcreteDivider: " + DIVIDER.getClass().getSimpleName() + "\n" +
                 "ConcreteConquerer: " + CONQUERER.getClass().getSimpleName();
         return output;

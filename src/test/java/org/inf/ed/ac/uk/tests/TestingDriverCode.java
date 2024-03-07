@@ -7,7 +7,7 @@ public class TestingDriverCode {
 
     public static void main(String[] args) {
         MergeSortExample mergeSortExample = new MergeSortExample();
-        mergeSortExample.testParallelism();
+        mergeSortExample.testMinSize();
 //        StrassensExample exampleStrassens = new StrassensExample();
 //        exampleStrassens.testMinSize();
 //        NestedExample exampleNesting = new NestedExample();
