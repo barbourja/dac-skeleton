@@ -4,7 +4,6 @@ import org.inf.ed.ac.uk.framework.GenericSkeletonTest;
 import org.inf.ed.ac.uk.skeleton.DaCSkeleton;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Random;
 
 public class MergeSortTest extends GenericSkeletonTest {
@@ -19,11 +18,11 @@ public class MergeSortTest extends GenericSkeletonTest {
         ArrayList<Long> runtimes = new ArrayList<>();
         rand.setSeed(SEED);
         for (int i = 0; i < NUM_RUNS_PER_INPUT; i++) {
-            List<Integer> input = new ArrayList<>();
+            Integer[] input = new Integer[inputSize];
             for (int j = 0; j < inputSize; j++) {
-                input.add(rand.nextInt());
+                input[j] = rand.nextInt();
             }
-            runtimes.add(runSimpleTest(skeletonUnderTest, input, minSize, parallelism));
+            runtimes.add(runSimpleTest(skeletonUnderTest, new ArrayView(input, 0, input.length), minSize, parallelism));
         }
         long avgRuntime = Math.round(runtimes.stream().mapToDouble(Double::valueOf).average().getAsDouble());
         if (fullPrinting) {
@@ -37,7 +36,7 @@ public class MergeSortTest extends GenericSkeletonTest {
         return avgRuntime;
     }
 
-    private long runSimpleTest(DaCSkeleton<List<Integer>, List<Integer>> skeletonUnderTest, List<Integer> input, Integer minSize, Integer parallelism) {
+    private long runSimpleTest(DaCSkeleton<ArrayView, ArrayView> skeletonUnderTest, ArrayView input, Integer minSize, Integer parallelism) {
         if (minSize != null) {
             MergeSortExample.MergeSortDivider divider = (MergeSortExample.MergeSortDivider) skeletonUnderTest.getDivider();
             divider.setParallelismCutOff(minSize);

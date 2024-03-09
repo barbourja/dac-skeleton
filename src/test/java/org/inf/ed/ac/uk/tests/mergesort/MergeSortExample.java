@@ -12,7 +12,7 @@ import static java.lang.Math.*;
 
 public class MergeSortExample {
 
-    public static class MergeSortDivider extends ConcreteDivider<List<Integer>> {
+    public static class MergeSortDivider extends ConcreteDivider<ArrayView> {
         private int DIVISION_THRESHOLD;
         public MergeSortDivider(int divisionThreshold) {
             super();
@@ -20,14 +20,14 @@ public class MergeSortExample {
         }
 
         @Override
-        public boolean canDivide(List<Integer> input) {
+        public boolean canDivide(ArrayView input) {
             return input.size() > DIVISION_THRESHOLD;
         }
 
         @Override
-        protected Iterable<List<Integer>> divisionProcedure(List<Integer> input) {
+        protected Iterable<ArrayView> divisionProcedure(ArrayView input) {
             int midPoint = input.size() / 2;
-            return List.of(input.subList(0, midPoint), input.subList(midPoint, input.size()));
+            return List.of(new ArrayView(input, 0, midPoint), new ArrayView(input, midPoint, input.size()));
         }
 
         public boolean setParallelismCutOff(int newCutOff) {
@@ -39,53 +39,54 @@ public class MergeSortExample {
         }
     }
 
-    public static class MergeSortConquerer extends ConcreteConquerer<List<Integer>> {
+    public static class MergeSortConquerer extends ConcreteConquerer<ArrayView> {
 
         public MergeSortConquerer() {
             super();
         }
 
         @Override
-        public List<Integer> conquer(Iterable<List<Integer>> outputsToConquer) {
+        public ArrayView conquer(Iterable<ArrayView> outputsToConquer) {
             if (outputsToConquer.spliterator().getExactSizeIfKnown() != 2) {
                 throw new RuntimeException("Number of sorted lists to combine should be 2!");
             }
-            Iterator<List<Integer>> outputsIterator = outputsToConquer.iterator();
-            List<Integer> list1 = outputsIterator.next();
-            List<Integer> list2 = outputsIterator.next();
+            Iterator<ArrayView> outputsIterator = outputsToConquer.iterator();
+            ArrayView list1 = outputsIterator.next();
+            ArrayView list2 = outputsIterator.next();
 
-            List<Integer> mergedList = new ArrayList<>();
-            int i = 0, j = 0;
+            Integer[] mergedList = new Integer[list1.size() + list2.size()];
+            int i = 0, j = 0, k = 0;
             while (i < list1.size() || j < list2.size()) {
                 if (i < list1.size() && j < list2.size()) {
                     if (list1.get(i) <= list2.get(j)) {
-                        mergedList.add(list1.get(i));
+                        mergedList[k] = list1.get(i);
                         i++;
                     }
                     else {
-                        mergedList.add(list2.get(j));
+                        mergedList[k] = list2.get(j);
                         j++;
                     }
                 }
                 else if (i < list1.size()) {
-                    mergedList.add(list1.get(i));
+                    mergedList[k] = list1.get(i);
                     i++;
                 }
                 else {
-                    mergedList.add(list2.get(j));
+                    mergedList[k] = list2.get(j);
                     j++;
                 }
+                k++;
             }
-            return mergedList;
+            return new ArrayView(mergedList, 0, mergedList.length);
         }
     }
 
-    public static class SequentialMergeSortExecutor extends ConcreteExecutor<List<Integer>, List<Integer>> {
+    public static class SequentialMergeSortExecutor extends ConcreteExecutor<ArrayView, ArrayView> {
         private final int BASE_CASE_SIZE;
         public SequentialMergeSortExecutor(int baseCaseSize) {
             this.BASE_CASE_SIZE = baseCaseSize;
         }
-        private List<Integer> insertionSort(List<Integer> input) {
+        private ArrayView insertionSort(ArrayView input) {
             if (input.size() < 2) {
                 return input;
             }
@@ -101,19 +102,19 @@ public class MergeSortExample {
             }
             return input;
         }
-        public List<Integer> execute(List<Integer> input) { // Sequential MergeSort
-            ConcreteDivider<List<Integer>> divider = new MergeSortDivider(BASE_CASE_SIZE); // DRY principle - using divider implementation for sequential
-            Iterable<List<Integer>> dividedInputs = divider.divide(input);
+        public ArrayView execute(ArrayView input) { // Sequential MergeSort
+            ConcreteDivider<ArrayView> divider = new MergeSortDivider(BASE_CASE_SIZE); // DRY principle - using divider implementation for sequential
+            Iterable<ArrayView> dividedInputs = divider.divide(input);
 
             boolean baseReached = dividedInputs.spliterator().getExactSizeIfKnown() == 1; // If divide returns singleton we have reached the base case size
-            Iterator<List<Integer>> dividedInputsIterator = dividedInputs.iterator();
+            Iterator<ArrayView> dividedInputsIterator = dividedInputs.iterator();
             if (baseReached) {
                 return insertionSort(dividedInputs.iterator().next());
             }
             else {
-                ConcreteConquerer<List<Integer>> conquerer = new MergeSortConquerer(); // DRY principle - using conquerer implementation for merging lists
-                List<Integer> list1 = dividedInputsIterator.next();
-                List<Integer> list2 = dividedInputsIterator.next();
+                ConcreteConquerer<ArrayView> conquerer = new MergeSortConquerer(); // DRY principle - using conquerer implementation for merging lists
+                ArrayView list1 = dividedInputsIterator.next();
+                ArrayView list2 = dividedInputsIterator.next();
                 return conquerer.conquer(List.of(execute(list1), execute(list2)));
             }
         }
@@ -121,22 +122,27 @@ public class MergeSortExample {
 
     public void run() {
         final int PARALLELISM = 16;
-        DaCSkeleton<List<Integer>, List<Integer>> myMergeSortDaCSkeleton = new DaCSkeleton<>(
+        DaCSkeleton<ArrayView, ArrayView> myMergeSortDaCSkeleton = new DaCSkeleton<>(
                 PARALLELISM,
                 new SequentialMergeSortExecutor(20),
                 new MergeSortDivider(100),
                 new MergeSortConquerer()
         );
 
-
-        List<Integer> testList = new ArrayList<>();
+        // Generate test input and input to verify skeleton result against
+        int inputSize = 100000;
+        Integer[] testList = new Integer[inputSize];
+        Integer[] verifyList = new Integer[inputSize];
         Random rand = new Random();
-        for (int i = 0; i < 100000; i++) {
-            testList.add(rand.nextInt(1000000));
+        for (int i = 0; i < inputSize; i++) {
+            int randInt = rand.nextInt();
+            testList[i] = randInt;
+            verifyList[i] = randInt;
         }
-        List<Integer> skeletonResult = myMergeSortDaCSkeleton.execute(testList);
-        Collections.sort(testList);
-        System.out.println(testList.equals(skeletonResult));
+        ArrayView skeletonResult = myMergeSortDaCSkeleton.execute(new ArrayView(testList, 0, testList.length));
+        Integer[] result = skeletonResult.getBaseArray();
+        Arrays.sort(verifyList); // Sort the verification list using Java sort
+        System.out.println(Arrays.equals(result, verifyList)); // Check skeleton output matches sorted verification list
     }
 
     public void testParallelism() {
@@ -148,7 +154,7 @@ public class MergeSortExample {
 
         Integer[] parallelismValues = new Integer[]{1, 2, 4, 8, 16, 32, 64};
 
-        DaCSkeleton<List<Integer>, List<Integer>> myMergeSortDaCSkeleton = new DaCSkeleton<>(
+        DaCSkeleton<ArrayView, ArrayView> myMergeSortDaCSkeleton = new DaCSkeleton<>(
                 INITIAL_PARALLELISM,
                 new SequentialMergeSortExecutor(SEQ_MIN_SIZE),
                 new MergeSortDivider(PARALLELISM_MIN_SIZE_PLACEHOLDER),
@@ -166,7 +172,7 @@ public class MergeSortExample {
         final int PARALLELISM_MIN_SIZE_PLACEHOLDER = 1;
         final int N = 23;
         int inputSize = (int) pow(2, N);
-        DaCSkeleton<List<Integer>, List<Integer>> myMergeSortDaCSkeleton = new DaCSkeleton<>(
+        DaCSkeleton<ArrayView, ArrayView> myMergeSortDaCSkeleton = new DaCSkeleton<>(
                 PARALLELISM,
                 new SequentialMergeSortExecutor(SEQ_MIN_SIZE),
                 new MergeSortDivider(PARALLELISM_MIN_SIZE_PLACEHOLDER),

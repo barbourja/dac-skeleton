@@ -205,7 +205,8 @@ public class StrassensExample {
                 new StrassensDivider(128),
                 new StrassensConquerer()
         );
-        System.out.println(myStrassensDaCSkeleton.toString());
+
+        // Generate two input matrices to multiply
         final int INPUT_DIMENSION = 1024;
         Random rand = new Random();
         int[][] input1 = new int[INPUT_DIMENSION][INPUT_DIMENSION];
@@ -221,10 +222,10 @@ public class StrassensExample {
         Matrix mat1 = new ConcreteMatrix(input1);
         Matrix mat2 = new ConcreteMatrix(input2);
 
-        skeletonRes = myStrassensDaCSkeleton.execute(new StrassensInput(mat1, mat2, skeletonRes));
-        directRes = mat1.mult(mat2, directRes);
+        skeletonRes = myStrassensDaCSkeleton.execute(new StrassensInput(mat1, mat2, skeletonRes)); // Multiply using skeleton
+        directRes = mat1.mult(mat2, directRes); // Naively multiply directly to check skeleton result against
 
-        System.out.println(directRes.equals(skeletonRes));
+        System.out.println(directRes.equals(skeletonRes)); // Check skeleton result matches naive direct multiplication
 
     }
 
