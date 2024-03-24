@@ -1,8 +1,8 @@
 package org.inf.ed.ac.uk.tests.strassens;
 
-import org.inf.ed.ac.uk.skeleton.ConcreteConquerer;
-import org.inf.ed.ac.uk.skeleton.ConcreteDivider;
-import org.inf.ed.ac.uk.skeleton.ConcreteExecutor;
+import org.inf.ed.ac.uk.skeleton.GenericConquerer;
+import org.inf.ed.ac.uk.skeleton.GenericDivider;
+import org.inf.ed.ac.uk.skeleton.GenericExecutor;
 import org.inf.ed.ac.uk.skeleton.DaCSkeleton;
 
 import java.util.*;
@@ -11,7 +11,7 @@ import static java.lang.Math.*;
 
 public class StrassensExample {
 
-    public class StrassensDivider extends ConcreteDivider<StrassensInput> {
+    public class StrassensDivider extends GenericDivider<StrassensInput> {
         private int DIMENSION_DIVISION_THRESHOLD;
         public StrassensDivider(int dimensionDivisionThreshold) {
             this.DIMENSION_DIVISION_THRESHOLD = dimensionDivisionThreshold;
@@ -87,7 +87,7 @@ public class StrassensExample {
         }
     }
 
-    public class StrassensConquerer extends ConcreteConquerer<Matrix> {
+    public class StrassensConquerer extends GenericConquerer<Matrix> {
         @Override
         public Matrix conquer(Iterable<Matrix> outputsToConquer) {
             if (outputsToConquer.spliterator().getExactSizeIfKnown() != 7) {
@@ -122,7 +122,7 @@ public class StrassensExample {
         }
     }
 
-    public class SequentialStrassensExecutor extends ConcreteExecutor<StrassensInput, Matrix> {
+    public class SequentialStrassensExecutor extends GenericExecutor<StrassensInput, Matrix> {
 
         private final int MIN_MATRIX_DIMENSION;
         public SequentialStrassensExecutor(int minMatrixDimension) {

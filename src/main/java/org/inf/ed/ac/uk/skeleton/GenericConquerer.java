@@ -10,9 +10,9 @@ import java.util.ConcurrentModificationException;
  * synchronization of shared global state!
  * @param <O> output type of divide-and-conquer algorithm
  */
-public abstract class ConcreteConquerer<O> implements IConquerer<O>{
+public abstract class GenericConquerer<O> implements IConquerer<O>{
 
-    public ConcreteConquerer(){}
+    public GenericConquerer(){}
 
     /**
      * Combines multiple outputs into a single output

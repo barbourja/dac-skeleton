@@ -1,7 +1,7 @@
 package org.inf.ed.ac.uk.tests;
 
-import org.inf.ed.ac.uk.skeleton.ConcreteConquerer;
-import org.inf.ed.ac.uk.skeleton.ConcreteDivider;
+import org.inf.ed.ac.uk.skeleton.GenericConquerer;
+import org.inf.ed.ac.uk.skeleton.GenericDivider;
 import org.inf.ed.ac.uk.skeleton.DaCSkeleton;
 import org.inf.ed.ac.uk.tests.mergesort.ArrayView;
 import org.inf.ed.ac.uk.tests.mergesort.MergeSortExample;
@@ -14,7 +14,7 @@ import java.util.*;
  */
 public class NestedExample {
 
-    private class PartitionDivider extends ConcreteDivider<ArrayView> {
+    private class PartitionDivider extends GenericDivider<ArrayView> {
         private final int MAX_PARTITION_SIZE;
         public PartitionDivider(int maxPartitionSize) {
             this.MAX_PARTITION_SIZE = maxPartitionSize;
@@ -31,7 +31,7 @@ public class NestedExample {
         }
     }
 
-    private class PartitionConquerer extends ConcreteConquerer<ArrayView> {
+    private class PartitionConquerer extends GenericConquerer<ArrayView> {
 
         public PartitionConquerer() {
             super();

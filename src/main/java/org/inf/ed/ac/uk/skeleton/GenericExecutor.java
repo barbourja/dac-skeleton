@@ -9,9 +9,9 @@ import java.util.ConcurrentModificationException;
  * @param <I> input type of divide-and-conquer algorithm
  * @param <O> output type of divide-and-conquer algorithm
  */
-public abstract class ConcreteExecutor<I,O> implements IExecutor<I,O> {
+public abstract class GenericExecutor<I,O> implements IExecutor<I,O> {
 
-    public ConcreteExecutor(){}
+    public GenericExecutor(){}
 
     /**
      * Should perform the base case computation on a given input

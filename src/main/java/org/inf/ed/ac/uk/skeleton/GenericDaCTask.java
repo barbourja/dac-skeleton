@@ -9,7 +9,7 @@ import java.util.concurrent.RecursiveTask;
  * Takes on the responsibility of constructing smaller subtasks and sending
  * them for execution by a ForkJoin pool. However, in order to do this,
  * the client must provide valid implementations of the abstract base classes:
- * 'ConcreteDivider', 'ConcreteConquerer', and 'ConcreteExecutor'.
+ * 'GenericDivider', 'GenericConquerer', and 'GenericExecutor'.
  *
  * @param <I> input type of divide-and-conquer algorithm
  * @param <O> ouput type of divide-and-conquer algorithm

@@ -12,9 +12,9 @@ import java.util.ConcurrentModificationException;
  * synchronization of shared global state!
  * @param <I> input type of divide-and-conquer algorithm
  */
-public abstract class ConcreteDivider<I> implements IDivider<I>{
+public abstract class GenericDivider<I> implements IDivider<I>{
 
-    public ConcreteDivider(){}
+    public GenericDivider(){}
     public abstract boolean canDivide(I input);
     protected abstract Iterable<I> divisionProcedure(I input);
 

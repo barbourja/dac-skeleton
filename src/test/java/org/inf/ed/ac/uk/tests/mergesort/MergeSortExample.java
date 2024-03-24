@@ -1,8 +1,8 @@
 package org.inf.ed.ac.uk.tests.mergesort;
 
-import org.inf.ed.ac.uk.skeleton.ConcreteConquerer;
-import org.inf.ed.ac.uk.skeleton.ConcreteDivider;
-import org.inf.ed.ac.uk.skeleton.ConcreteExecutor;
+import org.inf.ed.ac.uk.skeleton.GenericConquerer;
+import org.inf.ed.ac.uk.skeleton.GenericDivider;
+import org.inf.ed.ac.uk.skeleton.GenericExecutor;
 import org.inf.ed.ac.uk.skeleton.DaCSkeleton;
 
 import java.util.*;
@@ -12,7 +12,7 @@ import static java.lang.Math.*;
 
 public class MergeSortExample {
 
-    public static class MergeSortDivider extends ConcreteDivider<ArrayView> {
+    public static class MergeSortDivider extends GenericDivider<ArrayView> {
         private int DIVISION_THRESHOLD;
         public MergeSortDivider(int divisionThreshold) {
             super();
@@ -39,7 +39,7 @@ public class MergeSortExample {
         }
     }
 
-    public static class MergeSortConquerer extends ConcreteConquerer<ArrayView> {
+    public static class MergeSortConquerer extends GenericConquerer<ArrayView> {
 
         public MergeSortConquerer() {
             super();
@@ -81,7 +81,7 @@ public class MergeSortExample {
         }
     }
 
-    public static class SequentialMergeSortExecutor extends ConcreteExecutor<ArrayView, ArrayView> {
+    public static class SequentialMergeSortExecutor extends GenericExecutor<ArrayView, ArrayView> {
         private final int BASE_CASE_SIZE;
         public SequentialMergeSortExecutor(int baseCaseSize) {
             this.BASE_CASE_SIZE = baseCaseSize;
@@ -103,7 +103,7 @@ public class MergeSortExample {
             return input;
         }
         public ArrayView execute(ArrayView input) { // Sequential MergeSort
-            ConcreteDivider<ArrayView> divider = new MergeSortDivider(BASE_CASE_SIZE); // DRY principle - using divider implementation for sequential
+            GenericDivider<ArrayView> divider = new MergeSortDivider(BASE_CASE_SIZE); // DRY principle - using divider implementation for sequential
             Iterable<ArrayView> dividedInputs = divider.divide(input);
 
             boolean baseReached = dividedInputs.spliterator().getExactSizeIfKnown() == 1; // If divide returns singleton we have reached the base case size
@@ -112,7 +112,7 @@ public class MergeSortExample {
                 return insertionSort(dividedInputs.iterator().next());
             }
             else {
-                ConcreteConquerer<ArrayView> conquerer = new MergeSortConquerer(); // DRY principle - using conquerer implementation for merging lists
+                GenericConquerer<ArrayView> conquerer = new MergeSortConquerer(); // DRY principle - using conquerer implementation for merging lists
                 ArrayView list1 = dividedInputsIterator.next();
                 ArrayView list2 = dividedInputsIterator.next();
                 return conquerer.conquer(List.of(execute(list1), execute(list2)));
